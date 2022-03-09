@@ -1,0 +1,26 @@
+fileFormatVersion: 2
+guid: fa0428e4d3f5f43e6b99dc1b59019fca
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Jura
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 114dd46023d674334beacb9b8d253a13, type: 3}
+  - {fileID: 12800000, guid: 772db029d2952440583269a0e4073546, type: 3}
+  - {fileID: 12800000, guid: d8633aea197e24a3abdaeef3d344a6ee, type: 3}
+  - {fileID: 12800000, guid: b6f5b6a0cf4254ce3b596dfd5a56c036, type: 3}
+  - {fileID: 12800000, guid: 5985521ad2c544aeca28ee9bd8ff7d2d, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
