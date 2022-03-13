@@ -10,7 +10,8 @@ public class Player : MonoBehaviour
     private Rigidbody2D player_rb;
     public Transform Shadow;
     public GameObject Trail;
-    private bool iscollided,isjumping;
+    private bool iscollided;
+    public int isjumping=1;
     private void Awake()
     {
         instance = this;
@@ -43,35 +44,23 @@ public class Player : MonoBehaviour
         if (left)
         {
             //this.transform.position = Vector2.Lerp(this.transform.position, new Vector2(this.transform.position.x + 2f, this.transform.position.y + 2f), 0.5f);
-            if(isjumping)
-            {
-                player_rb.AddForce(new Vector2(forcex, forcey)*1.5f);
-            }
-            else
-            {
-                player_rb.AddForce(new Vector2(forcex, forcey));
-                isjumping = true;
-            }
+                player_rb.AddForce(new Vector2(forcex, forcey * isjumping));
+            if(isjumping < 2)
+                isjumping++;
         }
         else
         {
             //this.transform.position = Vector2.Lerp(this.transform.position, new Vector2(this.transform.position.x + 2f, this.transform.position.y + 2f), 0.5f);
-            if (isjumping)
-            {
-                player_rb.AddForce(new Vector2(-forcex, forcey) * 1.5f);
-            }
-            else
-            {
-                player_rb.AddForce(new Vector2(-forcex, forcey));
-                isjumping = true;
-            }
+                player_rb.AddForce(new Vector2(-forcex, forcey * isjumping));
+            if (isjumping < 2)
+                isjumping++;
         }
     }
     private IEnumerator changePosition(int index)
     {
         Trail.gameObject.SetActive(false);
         yield return new WaitForSeconds(0.50f);
-        this.transform.position = new Vector2(2.74f * index, this.transform.position.y);
+        this.transform.position = new Vector2(2.25f * index, this.transform.position.y);
         Trail.gameObject.SetActive(true);
     }
     private void OnTriggerEnter2D(Collider2D other)
@@ -79,6 +68,7 @@ public class Player : MonoBehaviour
         if (other.gameObject.tag == "Post1")
         {
             iscollided = true;
+            Invoke("TurnOffCollied", 1f);
         }
         if(other.gameObject.tag == "Post2")
         {
@@ -88,6 +78,10 @@ public class Player : MonoBehaviour
                 left = !left;
             }
         }
+    }
+    private void TurnOffCollied()
+    {
+        iscollided = false;
     }
     private void OnTriggerExit2D(Collider2D other)
     {
@@ -100,7 +94,11 @@ public class Player : MonoBehaviour
     {
         if(other.gameObject.tag == "Ground")
         {
-            isjumping = false;
+            isjumping = 1;
         }
+    }
+    public void ChangeSkin()
+    {
+        this.GetComponent<SpriteRenderer>().sprite = GameManager.instance.getCurrentBall();
     }
 }
