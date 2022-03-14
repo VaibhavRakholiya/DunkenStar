@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     public Transform Shadow;
     public GameObject Trail;
     private bool iscollided;
-    public int isjumping=1;
+    public float isjumping=0f;
     private void Awake()
     {
         instance = this;
@@ -34,26 +34,33 @@ public class Player : MonoBehaviour
         {
             StartCoroutine(changePosition(-1));
         }
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && GameManager.instance.GameStatus == GameManager.status.Play)
         {
             move();
         }
+  
     }
     private void move()
     {
         if (left)
         {
             //this.transform.position = Vector2.Lerp(this.transform.position, new Vector2(this.transform.position.x + 2f, this.transform.position.y + 2f), 0.5f);
-                player_rb.AddForce(new Vector2(forcex, forcey * isjumping));
-            if(isjumping < 2)
-                isjumping++;
+            //player_rb.AddForce(new Vector2(forcex, forcey ));
+            if (this.transform.position.y < 5.32f)
+                player_rb.velocity = Vector2.zero;
+                player_rb.AddForce(new Vector2(forcex, forcey ));
+             if (isjumping < 2)
+                isjumping+=0.50f;
         }
         else
         {
             //this.transform.position = Vector2.Lerp(this.transform.position, new Vector2(this.transform.position.x + 2f, this.transform.position.y + 2f), 0.5f);
-                player_rb.AddForce(new Vector2(-forcex, forcey * isjumping));
+            if (this.transform.position.y < 5.32f)
+                player_rb.velocity = Vector2.zero;
+                player_rb.AddForce(new Vector2(-forcex, forcey));
+                //player_rb.AddForce(new Vector2(-forcex, forcey));
             if (isjumping < 2)
-                isjumping++;
+                isjumping+=0.50f;
         }
     }
     private IEnumerator changePosition(int index)
@@ -68,7 +75,7 @@ public class Player : MonoBehaviour
         if (other.gameObject.tag == "Post1")
         {
             iscollided = true;
-            Invoke("TurnOffCollied", 1f);
+            Invoke("TurnOffCollied", 2f);
         }
         if(other.gameObject.tag == "Post2")
         {

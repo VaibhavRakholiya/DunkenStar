@@ -46,7 +46,10 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         Vibration.Vibrate(75);
+        Post.gameObject.SetActive(false);
+        Ball.gameObject.SetActive(false);
         GameStatus = status.Over;
+        UI_Manager.instance.Continue_Button_Image.GetComponent<Button>().image.sprite = getCurrentBall();
         UI_Manager.instance.filler.transform.parent.GetComponent<Animator>().enabled = false;
         UI_Manager.instance.GameOver_Panel.SetActive(true);
     }
@@ -113,11 +116,31 @@ public class GameManager : MonoBehaviour
     }
     public void GameReset()
     {
-
+        Post.gameObject.SetActive(true);
+        Ball.gameObject.SetActive(true);
+        UI_Manager.instance.GameOver_Panel.SetActive(false);
+        time = start_time;
+        GameStatus = status.Play;
     }
     public Sprite getCurrentBall()
     {
         return Shop.transform.GetChild(PlayerPrefs.GetInt("CurrentBall")).GetChild(0).GetComponent<Image>().sprite;
     }
-   
+    public void GamePause()
+    {
+        //Ball.gameObject.SetActive(false);
+        //Post.gameObject.SetActive(false);
+        Ball.GetComponent<SpriteRenderer>().color = UI_Manager.instance.Dark;
+        Post.GetComponent<SpriteRenderer>().color = UI_Manager.instance.Dark;
+        for (int i = 0; i < 4; i++)
+        {
+            if (i == 0 || i==1)
+                Post.transform.GetChild(i).GetComponent<SpriteRenderer>().color = UI_Manager.instance.Dark_Red;
+            if (i== 2 || i == 3)
+                Post.transform.GetChild(i).GetComponent<SpriteRenderer>().color = UI_Manager.instance.Dark;
+
+        }
+        GameStatus = status.Pause;
+        UI_Manager.instance.Pause_Panel.SetActive(true);
+    }
 }

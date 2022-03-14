@@ -8,7 +8,7 @@ public class UI_Manager : MonoBehaviour
 {
     public static UI_Manager instance;
     [Header("TimerColors")]
-    public Color Half, Danger,Normal;
+    public Color Half, Danger,Normal,Dark,White,Dark_Red,Red;
     [Header("Images")]
     public Image Ball_Image;
     public Image Ball_Border_Image;
@@ -23,9 +23,12 @@ public class UI_Manager : MonoBehaviour
     public GameObject GameOver_Panel;
     public GameObject Shop_Panel;
     public GameObject Click_Panel;
+    public GameObject Continue_Button_Image;
+    public GameObject Pause_Panel;
     [Header("Texts")]
     public Text Score_Text;
     public Text Total_Bought;
+
     private void Awake()
     {
         instance = this;
@@ -50,6 +53,17 @@ public class UI_Manager : MonoBehaviour
             filler.color = Normal;
             filler.transform.parent.GetComponent<Animator>().SetBool("animate1", false);
             filler.transform.parent.GetComponent<Animator>().SetBool("animate2", false);
+        }
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            if(!Pause_Panel.activeInHierarchy)
+            {
+                GameManager.instance.GamePause();
+            }
+            else
+            {
+                handle_onClick_Play();
+            }
         }
     }
     private void Start()
@@ -120,9 +134,35 @@ public class UI_Manager : MonoBehaviour
         Click_Panel.SetActive(false);
         Click_Panel.transform.parent.gameObject.SetActive(false);
     }
+    public void handle_onClick_ContinueButton()
+    {
+        //GameManager.instance.GameReset();
+        AdManager.instance.ShowRewardedAd();
+    }
     public void handle_onClick_RateUs()
     {
         Application.OpenURL("https://play.google.com/store/apps/details?id=com.V.R.Developers.puzzle.mergethenumbers");
+    }
+    public void handle_onClick_Play()
+    {
+        //GameManager.instance.Post.gameObject.SetActive(true);
+        //GameManager.instance.Ball.gameObject.SetActive(true);
+        GameManager.instance.Ball.GetComponent<SpriteRenderer>().color = White;
+        GameManager.instance.Post.GetComponent<SpriteRenderer>().color = White;
+        for (int i = 0; i < 4; i++)
+        {
+            if (i == 0 || i == 1)
+                GameManager.instance.Post.transform.GetChild(i).GetComponent<SpriteRenderer>().color = Red;
+            if (i == 2 || i == 3)
+                GameManager.instance.Post.transform.GetChild(i).GetComponent<SpriteRenderer>().color = White;
+
+        }
+        Pause_Panel.SetActive(false);
+        GameManager.instance.GameStatus = GameManager.status.Play;
+    }
+    public void handle_onClick_HomeButton()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
 

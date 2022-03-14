@@ -62,9 +62,10 @@
     <Compile Include="Assets/Scripts/AdManager.cs" />
     <Compile Include="Assets/Scripts/IAPManager.cs" />
     <Compile Include="Assets/Scripts/GameManager.cs" />
-    <Compile Include="Assets/Scripts/Ball_Animation.cs" />
-    <Compile Include="Assets/Scripts/Shop.cs" />
     <Compile Include="Assets/Scripts/ShopButton.cs" />
+    <Compile Include="Assets/Scripts/Shop.cs" />
+    <Compile Include="Assets/Scripts/Ball_Animation.cs" />
+    <Compile Include="Assets/Scripts/GameOver_ProgressBar.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets/GoogleMobileAds/GoogleMobileAds_version-7.0.0_manifest.txt" />
