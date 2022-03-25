@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using RDG;
 
 public class GameManager : MonoBehaviour
@@ -28,6 +29,8 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt("TotalBought", 1);
             PlayerPrefs.SetInt("TotalDunks", 0);
             PlayerPrefs.SetInt("BestScore", 0);
+            PlayerPrefs.SetInt("CurrentBall", 0);
+            PlayerPrefs.SetInt("Ads", 0);
         }
     }
     private void Start()
@@ -45,7 +48,9 @@ public class GameManager : MonoBehaviour
     }
     public void GameOver()
     {
+        AdManager.instance.bannerAd.Hide();
         Vibration.Vibrate(75);
+        UI_Manager.instance.BestScore_GameOver_Text.text = "BEST : " + PlayerPrefs.GetInt("BestScore");
         Post.gameObject.SetActive(false);
         Ball.gameObject.SetActive(false);
         GameStatus = status.Over;
@@ -55,7 +60,6 @@ public class GameManager : MonoBehaviour
     }
     private void IncreaseAchievements()
     {
-        PlayerPrefs.SetInt("TotalDunks", PlayerPrefs.GetInt("TotalDunks")+1);
         switch (Score)
         {
             case 10: UnlockAcheivment(1);break;
@@ -82,9 +86,11 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-    private void UnlockAcheivment(int index)
+    public void UnlockAcheivment(int index)
     {
+        Debug.Log("Achievment " + index + " is Unlocked.");
         PlayerPrefs.SetInt(index.ToString(), 1);
+        PlayerPrefs.SetInt("TotalBought", PlayerPrefs.GetInt("TotalBought")+1);
     }
     public void GeneratePost(bool left)
     {
@@ -101,8 +107,8 @@ public class GameManager : MonoBehaviour
                 start_time -= 1f;
             }
         }
-        IncreaseAchievements();
         UI_Manager.instance.IncreaseScore();
+        IncreaseAchievements();
         if(left)
         {
             Post.transform.position = new Vector2(-2f, Random.Range(-2f, 1.75f));
@@ -113,6 +119,10 @@ public class GameManager : MonoBehaviour
             Post.transform.position = new Vector2(2f, Random.Range(2f, 1.75f));
             Post.transform.localScale = new Vector2(-Post.transform.localScale.x, Post.transform.localScale.y);
         }
+    }
+    public void GameRestart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     public void GameReset()
     {
@@ -130,6 +140,7 @@ public class GameManager : MonoBehaviour
     {
         //Ball.gameObject.SetActive(false);
         //Post.gameObject.SetActive(false);
+        GameStatus = status.Pause;
         Ball.GetComponent<SpriteRenderer>().color = UI_Manager.instance.Dark;
         Post.GetComponent<SpriteRenderer>().color = UI_Manager.instance.Dark;
         for (int i = 0; i < 4; i++)
@@ -140,7 +151,20 @@ public class GameManager : MonoBehaviour
                 Post.transform.GetChild(i).GetComponent<SpriteRenderer>().color = UI_Manager.instance.Dark;
 
         }
-        GameStatus = status.Pause;
         UI_Manager.instance.Pause_Panel.SetActive(true);
     }
+    public void UnlockAchievment_Reward(int Reward_NO)
+    {
+        UI_Manager.instance.Click_Panel.GetComponent<Animator>().SetBool("animate", true);
+        UI_Manager.instance.Shop_Panel.transform.GetChild(0).transform.GetChild(Reward_NO).transform.GetChild(0).GetComponent<Image>().color = UI_Manager.instance.White;
+        UnlockAcheivment(Reward_NO);
+        UI_Manager.instance.Total_Bought.text = PlayerPrefs.GetInt("TotalBought").ToString() + "/15";
+        UI_Manager.instance.Shop_Panel.transform.GetChild(0).GetChild(PlayerPrefs.GetInt("CurrentBall")).GetChild(1).gameObject.SetActive(false);
+        PlayerPrefs.SetInt("CurrentBall", Reward_NO);
+        UI_Manager.instance.Shop_Panel.transform.GetChild(0).GetChild(PlayerPrefs.GetInt("CurrentBall")).GetChild(1).gameObject.SetActive(true);
+        Ball.ChangeSkin();
+        UI_Manager.instance.Invoke("close_panel", 0.75f);
+
+    }
+
 }

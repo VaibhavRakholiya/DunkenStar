@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class UI_Manager : MonoBehaviour
 {
     public static UI_Manager instance;
+    public GridLayoutGroup ShopGrid;
     [Header("TimerColors")]
     public Color Half, Danger,Normal,Dark,White,Dark_Red,Red;
     [Header("Images")]
@@ -28,10 +28,13 @@ public class UI_Manager : MonoBehaviour
     [Header("Texts")]
     public Text Score_Text;
     public Text Total_Bought;
+    public Text BestScore_Text;
+    public Text BestScore_GameOver_Text;
 
     private void Awake()
     {
         instance = this;
+        //ShopGrid.cellSize =new Vector2(Screen.height * 0.075f,Screen.height*0.075f);
     }
     private void Update()
     {
@@ -54,7 +57,7 @@ public class UI_Manager : MonoBehaviour
             filler.transform.parent.GetComponent<Animator>().SetBool("animate1", false);
             filler.transform.parent.GetComponent<Animator>().SetBool("animate2", false);
         }
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if(Input.GetKeyDown(KeyCode.Escape) && GameManager.instance.GameStatus == GameManager.status.Play)
         {
             if(!Pause_Panel.activeInHierarchy)
             {
@@ -68,6 +71,7 @@ public class UI_Manager : MonoBehaviour
     }
     private void Start()
     {
+        BestScore_Text.text = "BEST : " + PlayerPrefs.GetInt("BestScore").ToString() ;
         // Changing the skin of title image.
         Ball_Image.sprite = GameManager.instance.getCurrentBall();
         StartCoroutine(Ball_Animation());
@@ -98,7 +102,7 @@ public class UI_Manager : MonoBehaviour
     public void handle_onClickRetry()
     {
         AdManager.instance.ShowFullScreenAd();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        GameManager.instance.GameRestart();
         //GameOver_Panel.SetActive(false);
         //GameManager.instance.GameReset();
     }
@@ -115,6 +119,7 @@ public class UI_Manager : MonoBehaviour
         if (PlayerPrefs.GetInt("BestScore") < GameManager.instance.Score)
             PlayerPrefs.SetInt("BestScore", GameManager.instance.Score);
         Score_Text.text = GameManager.instance.Score.ToString();
+        PlayerPrefs.SetInt("TotalDunks", PlayerPrefs.GetInt("TotalDunks") + 1);
     }
     public void handle_onClick_ShopButton()
     {
@@ -137,11 +142,11 @@ public class UI_Manager : MonoBehaviour
     public void handle_onClick_ContinueButton()
     {
         //GameManager.instance.GameReset();
-        AdManager.instance.ShowRewardedAd();
+        AdManager.instance.ShowRewardedAd(0);
     }
     public void handle_onClick_RateUs()
     {
-        Application.OpenURL("https://play.google.com/store/apps/details?id=com.V.R.Developers.puzzle.mergethenumbers");
+        Application.OpenURL("https://play.google.com/store/apps/details?id=com.sports.basketball.games.dunkenstar");
     }
     public void handle_onClick_Play()
     {
@@ -162,7 +167,11 @@ public class UI_Manager : MonoBehaviour
     }
     public void handle_onClick_HomeButton()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        GameManager.instance.GameRestart();
+    }
+    public void handle_onClick_PauseButton()
+    {
+        GameManager.instance.GamePause();
     }
 }
 

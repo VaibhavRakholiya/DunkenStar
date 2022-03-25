@@ -9,8 +9,8 @@ public class Player : MonoBehaviour
     public bool left;
     private Rigidbody2D player_rb;
     public Transform Shadow;
-    public GameObject Trail;
-    private bool iscollided;
+    public TrailRenderer Trail;
+    private bool iscollided,onground;
     public float isjumping=0f;
     private void Awake()
     {
@@ -36,9 +36,13 @@ public class Player : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(0) && GameManager.instance.GameStatus == GameManager.status.Play)
         {
+            //player_rb.angularDrag = 0f;
             move();
         }
-  
+        if (player_rb.velocity.x > 1.0f)
+            this.transform.Rotate(0f, 0f, -1.5f);
+        if (player_rb.velocity.x < -1.0f)
+            this.transform.Rotate(0f, 0f, 1.5f);
     }
     private void move()
     {
@@ -47,8 +51,10 @@ public class Player : MonoBehaviour
             //this.transform.position = Vector2.Lerp(this.transform.position, new Vector2(this.transform.position.x + 2f, this.transform.position.y + 2f), 0.5f);
             //player_rb.AddForce(new Vector2(forcex, forcey ));
             if (this.transform.position.y < 5.32f)
+            {
                 player_rb.velocity = Vector2.zero;
-                player_rb.AddForce(new Vector2(forcex, forcey ));
+                player_rb.AddForce(new Vector2(forcex, forcey));
+            }
              if (isjumping < 2)
                 isjumping+=0.50f;
         }
@@ -56,8 +62,11 @@ public class Player : MonoBehaviour
         {
             //this.transform.position = Vector2.Lerp(this.transform.position, new Vector2(this.transform.position.x + 2f, this.transform.position.y + 2f), 0.5f);
             if (this.transform.position.y < 5.32f)
+            {
                 player_rb.velocity = Vector2.zero;
                 player_rb.AddForce(new Vector2(-forcex, forcey));
+            }
+                
                 //player_rb.AddForce(new Vector2(-forcex, forcey));
             if (isjumping < 2)
                 isjumping+=0.50f;
@@ -65,43 +74,51 @@ public class Player : MonoBehaviour
     }
     private IEnumerator changePosition(int index)
     {
-        Trail.gameObject.SetActive(false);
+        Trail.emitting = false;
         yield return new WaitForSeconds(0.50f);
         this.transform.position = new Vector2(2.25f * index, this.transform.position.y);
-        Trail.gameObject.SetActive(true);
+        yield return new WaitForSeconds(0.50f);
+        Trail.emitting = true;
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "Post1")
-        {
-            iscollided = true;
-            Invoke("TurnOffCollied", 2f);
-        }
         if(other.gameObject.tag == "Post2")
         {
             if(iscollided)
             {
                 GameManager.instance.GeneratePost(left);
+                iscollided = false;
                 left = !left;
             }
+        }
+    }
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Post1")
+        {
+            iscollided = true;
+            Invoke("TurnOffCollied", 0.5f);
+        }
+        
+    }
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "Ground")
+        {
+            onground = true;
         }
     }
     private void TurnOffCollied()
     {
         iscollided = false;
     }
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if(other.tag == "Post2")
-        {
-            iscollided = false;
-        }
-    }
     private void OnCollisionEnter2D(Collision2D other)
     {
         if(other.gameObject.tag == "Ground")
         {
             isjumping = 1;
+            //player_rb.angularDrag = 1.5f;
+            onground = false;
         }
     }
     public void ChangeSkin()
