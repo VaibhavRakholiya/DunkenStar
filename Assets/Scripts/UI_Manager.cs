@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -101,7 +100,7 @@ public class UI_Manager : MonoBehaviour
     }
     public void handle_onClickRetry()
     {
-        AdManager.instance.ShowFullScreenAd();
+        // AdManager.instance.ShowFullScreenAd(); // Ad Placement.
         GameManager.instance.GameRestart();
         //GameOver_Panel.SetActive(false);
         //GameManager.instance.GameReset();
@@ -142,7 +141,7 @@ public class UI_Manager : MonoBehaviour
     public void handle_onClick_ContinueButton()
     {
         //GameManager.instance.GameReset();
-        AdManager.instance.ShowRewardedAd(0);
+        // AdManager.instance.ShowRewardedAd(0); // Ad Placement
     }
     public void handle_onClick_RateUs()
     {

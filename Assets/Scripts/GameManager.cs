@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
     }
     public void GameOver()
     {
-        AdManager.instance.bannerAd.Hide();
+        // AdManager.instance.bannerAd.Hide(); // Ad Placement.
         Vibration.Vibrate(75);
         UI_Manager.instance.BestScore_GameOver_Text.text = "BEST : " + PlayerPrefs.GetInt("BestScore");
         Post.gameObject.SetActive(false);
